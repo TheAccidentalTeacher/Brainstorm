@@ -1,0 +1,38 @@
+{
+  "name": "ultimate-project-hub-backend",
+  "version": "1.0.0",
+  "description": "Backend for Ultimate Project & Brainstorm Hub",
+  "main": "dist/server.js",
+  "scripts": {
+    "start": "node dist/server.js",
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "tsc",
+    "test": "jest",
+    "lint": "eslint . --ext .ts"
+  },
+  "keywords": [
+    "project-management",
+    "collaboration",
+    "ai",
+    "brainstorming"
+  ],
+  "author": "NinjaTech AI",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "mongoose": "^7.5.0",
+    "neo4j-driver": "^5.11.0",
+    "redis": "^4.6.8",
+    "y-websocket": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.13",
+    "@types/express": "^4.17.17",
+    "@types/node": "^20.5.7",
+    "ts-node": "^10.9.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.2.2"
+  }
+}

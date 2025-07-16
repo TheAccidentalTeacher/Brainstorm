@@ -1,0 +1,202 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: |
+          cd src/frontend
+          npm ci
+          cd ../../src/backend
+          npm ci
+          
+      - name: Lint frontend
+        run: |
+          cd src/frontend
+          npm run lint
+          
+      - name: Lint backend
+        run: |
+          cd src/backend
+          npm run lint
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs: lint
+    
+    services:
+      mongodb:
+        image: mongo:6
+        ports:
+          - 27017:27017
+          
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+          
+      neo4j:
+        image: neo4j:5
+        ports:
+          - 7474:7474
+          - 7687:7687
+        env:
+          NEO4J_AUTH: neo4j/password
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: |
+          cd src/frontend
+          npm ci
+          cd ../../src/backend
+          npm ci
+          
+      - name: Run frontend tests
+        run: |
+          cd src/frontend
+          npm test -- --coverage
+          
+      - name: Run backend tests
+        run: |
+          cd src/backend
+          npm test -- --coverage
+        env:
+          MONGO_URI: mongodb://localhost:27017/test
+          REDIS_URL: redis://localhost:6379
+          NEO4J_URI: bolt://localhost:7687
+          NEO4J_USER: neo4j
+          NEO4J_PASSWORD: password
+          JWT_SECRET: test-secret-key
+          
+      - name: Upload test coverage
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'push'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: |
+          cd src/frontend
+          npm ci
+          cd ../../src/backend
+          npm ci
+          
+      - name: Build frontend
+        run: |
+          cd src/frontend
+          npm run build
+          
+      - name: Build backend
+        run: |
+          cd src/backend
+          npm run build
+          
+      - name: Upload frontend build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: frontend-build
+          path: src/frontend/.next
+          retention-days: 7
+          
+      - name: Upload backend build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: backend-build
+          path: src/backend/dist
+          retention-days: 7
+          
+  deploy-preview:
+    name: Deploy Preview
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Download frontend build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: frontend-build
+          path: src/frontend/.next
+          
+      - name: Download backend build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: backend-build
+          path: src/backend/dist
+          
+      - name: Deploy to staging
+        run: echo "Deploy to staging environment would happen here"
+        # Add actual deployment steps here when ready
+        
+  deploy-production:
+    name: Deploy Production
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: production
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Download frontend build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: frontend-build
+          path: src/frontend/.next
+          
+      - name: Download backend build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: backend-build
+          path: src/backend/dist
+          
+      - name: Deploy to production
+        run: echo "Deploy to production environment would happen here"
+        # Add actual deployment steps here when ready

@@ -1,0 +1,19 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "Running pre-commit hooks..."
+
+# Check for staged changes in frontend
+if git diff --cached --name-only | grep -q "src/frontend"; then
+  echo "Running frontend linting and type checking..."
+  cd src/frontend && npm run lint && npm run typecheck
+fi
+
+# Check for staged changes in backend
+if git diff --cached --name-only | grep -q "src/backend"; then
+  echo "Running backend linting and type checking..."
+  cd src/backend && npm run lint && npm run typecheck
+fi
+
+# Run prettier on staged files
+npx lint-staged
