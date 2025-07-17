@@ -318,7 +318,7 @@ export const updateProjectPermissions = async (req: Request, res: Response): Pro
     if (roles) {
       // Ensure creator remains admin
       const creatorId = project.createdBy.toString();
-      const newRoles = new Map(Object.entries(roles));
+      const newRoles = new Map(Object.entries(roles)) as Map<string, 'admin' | 'editor' | 'viewer'>;
       
       if (newRoles.has(creatorId) && newRoles.get(creatorId) !== 'admin') {
         newRoles.set(creatorId, 'admin');

@@ -96,7 +96,7 @@ const startServer = async () => {
     const redisClient = await connectRedis();
     
     // Initialize WebSocket server
-    const { wsServer, io } = initWebsocketServer(server);
+    const io = initWebsocketServer(server);
     
     // Start listening
     server.listen(PORT, () => {

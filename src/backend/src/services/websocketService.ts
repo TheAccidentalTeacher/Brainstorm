@@ -1,6 +1,6 @@
 import * as Y from 'yjs';
 import http from 'http';
-import { Server, Socket } from 'socket.io';
+import { Server, Socket, RemoteSocket } from 'socket.io';
 
 interface UserData {
   id: string;
@@ -43,10 +43,10 @@ export const initWebsocketServer = (server: http.Server) => {
       });
 
       // Send currently active users to the new user
-      io.in(`document:${documentId}`).fetchSockets().then((sockets: Socket<any, any, any, SocketData>[]) => {
-        const activeUsers = sockets
-          .filter((s: Socket<any, any, any, SocketData>) => s.id !== socket.id)
-          .map((s: Socket<any, any, any, SocketData>) => ({
+      io.in(`document:${documentId}`).fetchSockets().then((remoteSockets: RemoteSocket<any, SocketData>[]) => {
+        const activeUsers = remoteSockets
+          .filter((s: RemoteSocket<any, SocketData>) => s.id !== socket.id)
+          .map((s: RemoteSocket<any, SocketData>) => ({
             id: s.data.userId,
             name: s.data.userName,
             socketId: s.id,
