@@ -1,0 +1,12 @@
+# Railway Configuration
+[build]
+  builder = "NIXPACKS"
+
+[build.env]
+  NODE_VERSION = "18"
+
+[deploy]
+  startCommand = "cd src/backend && npm start"
+
+[build.buildCommand]
+  buildCommand = "cd src/backend && npm install && npm run build"
