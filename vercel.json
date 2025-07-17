@@ -1,21 +1,5 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "src/frontend/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "out"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
-  ]
+  "buildCommand": "cd src/frontend && npm install --legacy-peer-deps && npm run build",
+  "outputDirectory": "src/frontend/out",
+  "installCommand": "cd src/frontend && npm install --legacy-peer-deps"
 }
