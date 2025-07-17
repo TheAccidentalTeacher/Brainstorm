@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Ultimate Project & Brainstorm Hub",
-  description: "A comprehensive, AI-powered workspace that adapts to individual and team needs",
+  description: "A comprehensive, AI-powered workspace that adapts to individual and team needs - Debug Ready",
 };
 
 export default function RootLayout({
