@@ -1,4 +1,5 @@
 // API utility functions for frontend-backend communication
+import logger from './debug';
 
 const API_BASE_URL = typeof window !== 'undefined' && window.location.hostname === 'localhost' 
   ? 'http://localhost:5000/api'
@@ -14,6 +15,7 @@ const getAuthToken = (): string | null => {
 
 // Helper function to make authenticated requests
 const makeRequest = async (url: string, options: RequestInit = {}) => {
+  const start = performance.now();
   const token = getAuthToken();
   
   const headers: Record<string, string> = {
@@ -25,53 +27,120 @@ const makeRequest = async (url: string, options: RequestInit = {}) => {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_BASE_URL}${url}`, {
-    ...options,
-    headers,
+  logger.debug('Making API request', {
+    method: options.method || 'GET',
+    url: `${API_BASE_URL}${url}`,
+    hasAuth: !!token,
+    headers
   });
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({ message: 'Request failed' }));
-    throw new Error(errorData.message || `HTTP ${response.status}`);
-  }
+  try {
+    const response = await fetch(`${API_BASE_URL}${url}`, {
+      ...options,
+      headers,
+    });
 
-  return response.json();
+    const duration = performance.now() - start;
+    
+    logger.apiCall(
+      options.method || 'GET',
+      url,
+      response.status,
+      duration,
+      {
+        ok: response.ok,
+        statusText: response.statusText
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Request failed' }));
+      const error = new Error(errorData.message || `HTTP ${response.status}`);
+      logger.error('API request failed', error, {
+        status: response.status,
+        statusText: response.statusText,
+        errorData
+      });
+      throw error;
+    }
+
+    const data = await response.json();
+    logger.debug('API request successful', { url, duration, dataKeys: Object.keys(data) });
+    return data;
+  } catch (error) {
+    const duration = performance.now() - start;
+    logger.error('API request error', error, {
+      url,
+      duration,
+      method: options.method || 'GET'
+    });
+    throw error;
+  }
 };
 
 // Authentication API calls
 export const authAPI = {
   login: async (email: string, password: string) => {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    });
+    logger.info('Attempting login', { email });
+    
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ message: 'Login failed' }));
-      throw new Error(errorData.message || 'Login failed');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Login failed' }));
+        logger.error('Login failed', new Error(errorData.message), {
+          email,
+          status: response.status,
+          statusText: response.statusText
+        });
+        throw new Error(errorData.message || 'Login failed');
+      }
+
+      const data = await response.json();
+      logger.info('Login successful', { email, hasToken: !!data.token });
+      return data;
+    } catch (error) {
+      logger.error('Login error', error, { email });
+      throw error;
     }
-
-    return response.json();
   },
 
   register: async (email: string, password: string, displayName: string) => {
-    const response = await fetch(`${API_BASE_URL}/auth/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password, displayName }),
-    });
+    logger.info('Attempting registration', { email, displayName });
+    
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password, displayName }),
+      });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ message: 'Registration failed' }));
-      throw new Error(errorData.message || 'Registration failed');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Registration failed' }));
+        logger.error('Registration failed', new Error(errorData.message), {
+          email,
+          displayName,
+          status: response.status,
+          statusText: response.statusText
+        });
+        throw new Error(errorData.message || 'Registration failed');
+      }
+
+      const data = await response.json();
+      logger.info('Registration successful', { email, displayName, hasToken: !!data.token });
+      return data;
+    } catch (error) {
+      logger.error('Registration error', error, { email, displayName });
+      throw error;
     }
-
-    return response.json();
   },
 
   getCurrentUser: async () => {
@@ -79,6 +148,7 @@ export const authAPI = {
   },
 
   logout: async () => {
+    logger.info('User logging out');
     if (typeof window !== 'undefined') {
       localStorage.removeItem('authToken');
     }

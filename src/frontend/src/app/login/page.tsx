@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { authAPI } from "@/lib/api";
+import { useDebugLogger } from "@/lib/debug";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -11,29 +12,35 @@ export default function Login() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { log, setContext } = useDebugLogger('LoginPage');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
 
+    setContext({ email, action: 'login' });
+    log.info('Login form submitted');
+
     try {
-      console.log("Attempting login with:", { email });
+      log.debug('Calling auth API');
       
       // Call the real backend API
       const response = await authAPI.login(email, password);
       
-      console.log("Login successful:", response);
+      log.info('Login API response received', { hasToken: !!response.token });
       
       // Store token in localStorage (in a real app, use a more secure method)
       if (response.token) {
         localStorage.setItem("authToken", response.token);
+        log.debug('Auth token stored');
       }
       
+      log.info('Redirecting to dashboard');
       // Redirect to dashboard
       router.push("/dashboard");
     } catch (err) {
-      console.error("Login error:", err);
+      log.error('Login failed', err);
       const errorMessage = err instanceof Error ? err.message : "Failed to log in. Please check your credentials and try again.";
       setError(errorMessage);
     } finally {
