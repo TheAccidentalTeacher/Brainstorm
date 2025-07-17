@@ -1,20 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import dotenconst connectRedis = async () => {
-  try {
-    const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-    logger.info('Connecting to Redis...', { url: redisUrl.replace(/:\/\/[^@]*@/, '://***@') });
-    
-    const client = createClient({ url: redisUrl });
-    await client.connect();
-    
-    logger.info('Redis connected successfully');
-    return client;
-  } catch (error) {
-    logger.error('Redis connection error', error);
-    throw error;
-  }
-};nv';
+import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import neo4j from 'neo4j-driver';
 import { createClient } from 'redis';
@@ -83,20 +69,18 @@ const connectNeo4j = async () => {
 const connectRedis = async () => {
   try {
     const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-    const redisClient = createClient({ url: redisUrl });
-    await redisClient.connect();
-    console.log('Redis connected');
-    return redisClient;
+    logger.info('Connecting to Redis...', { url: redisUrl.replace(/:\/\/[^@]*@/, '://***@') });
+    
+    const client = createClient({ url: redisUrl });
+    await client.connect();
+    
+    logger.info('Redis connected successfully');
+    return client;
   } catch (error) {
-    console.error('Redis connection error:', error);
+    logger.error('Redis connection error', error);
     throw error;
   }
 };
-
-// API routes
-app.get('/', (req, res) => {
-  res.send('Ultimate Project & Brainstorm Hub API');
-});
 
 // Root endpoint
 app.get('/', (req, res) => {
@@ -108,7 +92,7 @@ app.get('/', (req, res) => {
   });
 });
 
-// Health check endpoint (no database required)
+// Health check endpoint
 app.get('/health', (req, res) => {
   const uptime = process.uptime();
   const health = {
@@ -122,8 +106,8 @@ app.get('/health', (req, res) => {
     },
     databases: {
       mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
-      neo4j: 'connected', // We'll assume connected if server is running
-      redis: 'connected'  // We'll assume connected if server is running
+      neo4j: 'connected',
+      redis: 'connected'
     }
   };
   
@@ -145,7 +129,11 @@ app.use('/api/collaboration', collaborationRoutes);
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error(err.stack);
+  logger.error('Unhandled error', err, {
+    method: req.method,
+    url: req.url,
+    body: req.body
+  });
   res.status(500).json({ message: 'Something went wrong!' });
 });
 
@@ -158,7 +146,7 @@ const startServer = async () => {
       nodeVersion: process.version
     });
 
-    // Connect to databases - require all connections to succeed
+    // Connect to databases
     await connectMongoDB();
     const neo4jDriver = await connectNeo4j();
     const redisClient = await connectRedis();
@@ -216,7 +204,7 @@ const startServer = async () => {
 
     process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
     process.on('SIGINT', () => gracefulShutdown('SIGINT'));
-    process.on('SIGUSR2', () => gracefulShutdown('SIGUSR2')); // Nodemon restart
+    process.on('SIGUSR2', () => gracefulShutdown('SIGUSR2'));
     
   } catch (error) {
     logger.error('🚨 Server startup failed', error);
