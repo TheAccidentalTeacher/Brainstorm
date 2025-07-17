@@ -1,23 +1,24 @@
 import { Request, Response } from 'express';
+// @ts-ignore
 import jwt from 'jsonwebtoken';
 import User, { IUser } from '../models/User';
 
 // JWT Secret
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key_here';
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
+const JWT_SECRET: string = process.env.JWT_SECRET || 'your_jwt_secret_key_here_fallback_for_development';
+const JWT_EXPIRES_IN: string = process.env.JWT_EXPIRES_IN || '7d';
 
 // Generate JWT token
 const generateToken = (user: IUser): string => {
-  return jwt.sign(
-    {
-      id: user._id.toString(),
-      email: user.email,
-    },
-    JWT_SECRET,
-    {
-      expiresIn: JWT_EXPIRES_IN,
-    }
-  );
+  const payload = {
+    id: user._id.toString(),
+    email: user.email,
+  };
+  
+  const options = {
+    expiresIn: JWT_EXPIRES_IN,
+  };
+  
+  return (jwt as any).sign(payload, JWT_SECRET, options);
 };
 
 // Register new user

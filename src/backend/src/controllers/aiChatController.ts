@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
-import AIChat from '../models/AIChat';
+import AIChat, { IMessage } from '../models/AIChat';
 import Project from '../models/Project';
 import Content from '../models/Content';
 
