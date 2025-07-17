@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import { driver as neo4jDriver } from 'neo4j-driver';
+import neo4j from 'neo4j-driver';
 import { createClient } from 'redis';
 import http from 'http';
 import { initWebsocketServer } from './services/websocketService';
@@ -47,7 +47,7 @@ const connectNeo4j = () => {
     const neo4jUser = process.env.NEO4J_USER || 'neo4j';
     const neo4jPassword = process.env.NEO4J_PASSWORD || 'password';
     
-    const driver = neo4jDriver(neo4jUri, { username: neo4jUser, password: neo4jPassword });
+    const driver = neo4j.driver(neo4jUri, neo4j.auth.basic(neo4jUser, neo4jPassword));
     console.log('Neo4j connected');
     return driver;
   } catch (error) {

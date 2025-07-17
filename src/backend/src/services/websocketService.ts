@@ -1,22 +1,25 @@
 import * as Y from 'yjs';
-import { WebsocketServer } from 'y-websocket/bin/utils';
 import http from 'http';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
+
+interface UserData {
+  id: string;
+  name: string;
+}
+
+interface SocketData {
+  userId?: string;
+  userName?: string;
+  currentDocument?: string;
+}
 
 /**
  * Initialize the WebSocket server for collaborative editing
  * @param server HTTP server instance
  */
 export const initWebsocketServer = (server: http.Server) => {
-  // Initialize Y.js WebSocket server
-  const wsServer = new WebsocketServer({
-    server,
-    path: '/collaboration',
-    pingTimeout: 30000,
-  });
-
   // Initialize Socket.io for presence and other real-time features
-  const io = new Server(server, {
+  const io = new Server<any, any, any, SocketData>(server, {
     cors: {
       origin: process.env.FRONTEND_URL || 'http://localhost:3000',
       methods: ['GET', 'POST'],
@@ -25,14 +28,14 @@ export const initWebsocketServer = (server: http.Server) => {
   });
 
   // Handle Socket.io connections
-  io.on('connection', (socket) => {
+  io.on('connection', (socket: Socket<any, any, any, SocketData>) => {
     console.log('User connected:', socket.id);
 
     // Handle user joining a document
-    socket.on('join-document', (documentId: string, userData: { id: string; name: string }) => {
+    socket.on('join-document', (documentId: string, userData: UserData) => {
       socket.join(`document:${documentId}`);
       
-      // Notify others that user joined
+      // Notify other users in the document
       socket.to(`document:${documentId}`).emit('user-joined', {
         id: userData.id,
         name: userData.name,
@@ -40,10 +43,10 @@ export const initWebsocketServer = (server: http.Server) => {
       });
 
       // Send currently active users to the new user
-      io.in(`document:${documentId}`).fetchSockets().then((sockets) => {
+      io.in(`document:${documentId}`).fetchSockets().then((sockets: Socket<any, any, any, SocketData>[]) => {
         const activeUsers = sockets
-          .filter((s) => s.id !== socket.id)
-          .map((s) => ({
+          .filter((s: Socket<any, any, any, SocketData>) => s.id !== socket.id)
+          .map((s: Socket<any, any, any, SocketData>) => ({
             id: s.data.userId,
             name: s.data.userName,
             socketId: s.id,
@@ -83,5 +86,5 @@ export const initWebsocketServer = (server: http.Server) => {
     });
   });
 
-  return { wsServer, io };
+  return io;
 };

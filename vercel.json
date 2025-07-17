@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd src/frontend && npm install && npm run build",
+  "buildCommand": "cd src/frontend && npm install --legacy-peer-deps && npm run build",
   "outputDirectory": "src/frontend/.next",
-  "installCommand": "cd src/frontend && npm install"
+  "installCommand": "cd src/frontend && npm install --legacy-peer-deps"
 }

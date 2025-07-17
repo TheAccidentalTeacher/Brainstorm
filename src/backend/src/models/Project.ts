@@ -21,7 +21,7 @@ export interface IProject extends Document {
   };
   permissions: {
     public: boolean;
-    roles: Record<string, 'admin' | 'editor' | 'viewer'>;
+    roles: Map<string, 'admin' | 'editor' | 'viewer'>;
   };
 }
 

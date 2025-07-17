@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import mongoose from 'mongoose';
 import User from '../models/User';
 
 // JWT Secret
@@ -114,7 +115,7 @@ export const isTeamMember = async (
 ): Promise<void> => {
   try {
     const userId = (req as any).user?.id;
-    const teamId = req.params.teamId;
+    const teamId = new mongoose.Types.ObjectId(req.params.teamId);
     
     if (!userId) {
       res.status(401).json({ message: 'Not authenticated' });
