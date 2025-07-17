@@ -37,22 +37,25 @@ const connectMongoDB = async () => {
     console.log('MongoDB connected');
   } catch (error) {
     console.error('MongoDB connection error:', error);
-    process.exit(1);
+    throw error;
   }
 };
 
-const connectNeo4j = () => {
+const connectNeo4j = async () => {
   try {
     const neo4jUri = process.env.NEO4J_URI || 'bolt://localhost:7687';
     const neo4jUser = process.env.NEO4J_USER || 'neo4j';
     const neo4jPassword = process.env.NEO4J_PASSWORD || 'password';
     
     const driver = neo4j.driver(neo4jUri, neo4j.auth.basic(neo4jUser, neo4jPassword));
+    
+    // Actually test the connection
+    await driver.verifyConnectivity();
     console.log('Neo4j connected');
     return driver;
   } catch (error) {
     console.error('Neo4j connection error:', error);
-    process.exit(1);
+    throw error;
   }
 };
 
@@ -65,13 +68,22 @@ const connectRedis = async () => {
     return redisClient;
   } catch (error) {
     console.error('Redis connection error:', error);
-    process.exit(1);
+    throw error;
   }
 };
 
 // API routes
 app.get('/', (req, res) => {
   res.send('Ultimate Project & Brainstorm Hub API');
+});
+
+// Health check endpoint (no database required)
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
+  });
 });
 
 // Register routes
@@ -90,10 +102,12 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 // Start server
 const startServer = async () => {
   try {
-    // Connect to databases
+    // Connect to databases - require all connections to succeed
     await connectMongoDB();
-    const neo4jDriver = connectNeo4j();
+    const neo4jDriver = await connectNeo4j();
     const redisClient = await connectRedis();
+    
+    console.log('All databases connected successfully');
     
     // Initialize WebSocket server
     const io = initWebsocketServer(server);
@@ -101,6 +115,9 @@ const startServer = async () => {
     // Start listening
     server.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
+      console.log(`MongoDB: Connected`);
+      console.log(`Neo4j: Connected`);
+      console.log(`Redis: Connected`);
       console.log(`WebSocket server running on ws://localhost:${PORT}/collaboration`);
     });
     
@@ -115,6 +132,7 @@ const startServer = async () => {
     });
   } catch (error) {
     console.error('Server startup error:', error);
+    console.error('Failed to start server. Please check your database connections.');
     process.exit(1);
   }
 };

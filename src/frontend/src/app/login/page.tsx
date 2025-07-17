@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { authAPI } from "@/lib/api";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -17,21 +18,24 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      // In a real implementation, this would call the backend API
-      // For now, we'll just simulate a successful login
-      console.log("Logging in with:", { email, password });
+      console.log("Attempting login with:", { email });
       
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Call the real backend API
+      const response = await authAPI.login(email, password);
+      
+      console.log("Login successful:", response);
       
       // Store token in localStorage (in a real app, use a more secure method)
-      localStorage.setItem("authToken", "sample-token");
+      if (response.token) {
+        localStorage.setItem("authToken", response.token);
+      }
       
       // Redirect to dashboard
       router.push("/dashboard");
     } catch (err) {
       console.error("Login error:", err);
-      setError("Failed to log in. Please check your credentials and try again.");
+      const errorMessage = err instanceof Error ? err.message : "Failed to log in. Please check your credentials and try again.";
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

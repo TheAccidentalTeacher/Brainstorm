@@ -1,0 +1,46 @@
+# 🚀 COMPLETE DEPLOYMENT ENVIRONMENT VARIABLES
+# Copy and paste these into your respective dashboards
+
+# ========================================
+# VERCEL ENVIRONMENT VARIABLES
+# ========================================
+# Go to: Vercel Dashboard → Project Settings → Environment Variables
+
+NEXT_PUBLIC_API_URL=https://brainstorm-production-fdab.up.railway.app/api
+NEXT_PUBLIC_WEBSOCKET_URL=wss://brainstorm-production-fdab.up.railway.app
+NEXT_PUBLIC_UPLOAD_URL=https://brainstorm-production-fdab.up.railway.app/api/upload
+NEXT_PUBLIC_ENABLE_AI_FEATURES=true
+NEXT_PUBLIC_ENABLE_COLLABORATIVE_EDITING=true
+NEXT_PUBLIC_AUTH_DOMAIN=your-auth-domain.auth0.com
+NEXT_PUBLIC_AUTH_CLIENT_ID=your-auth0-client-id
+NEXT_PUBLIC_AUTH_AUDIENCE=your-auth0-audience
+NEXT_PUBLIC_ANALYTICS_ID=your-analytics-id
+
+# ========================================
+# RAILWAY ENVIRONMENT VARIABLES
+# ========================================
+# Go to: Railway Dashboard → Variables Tab
+
+NODE_ENV=production
+PORT=8080
+FRONTEND_URL=https://brainstorm-git-main-theaccidentalteachers-projects.vercel.app
+MONGO_URI=mongodb+srv://scosom:4f.xpG28NdTRkbL@brainstorm-cluster.bg60my0.mongodb.net/?retryWrites=true&w=majority&appName=Brainstorm-Cluster
+NEO4J_URI=neo4j+s://0de041b2.databases.neo4j.io
+NEO4J_USER=neo4j
+NEO4J_PASSWORD=6L7nsnwKqDGJ3xZc5MzfMdDGrOapI-7c0rkSKsQ0EvU
+REDIS_URL=redis://default:*******@redis-17481.c275.us-east-1-4.ec2.redns.redis-cloud.com:17481
+JWT_SECRET=b7f962bc3f8de0df1d24e8de964228035db45ff55d6eacb4254bec08eb03cb0e7567a4385cc32d18417ee7afb40a27e0d2bf125dd3351fa856c7dd6dcf933006
+
+# ========================================
+# DEPLOYMENT URLS (FOR REFERENCE)
+# ========================================
+# Frontend: https://brainstorm-git-main-theaccidentalteachers-projects.vercel.app/
+# Backend: https://brainstorm-production-fdab.up.railway.app
+
+# ========================================
+# INSTRUCTIONS
+# ========================================
+# 1. VERCEL: Dashboard → Project → Settings → Environment Variables → Add each NEXT_PUBLIC_ variable
+# 2. RAILWAY: Dashboard → Variables → Add each backend variable
+# 3. Both platforms auto-redeploy when you save environment variables
+# 4. Test full-stack communication after both are deployed

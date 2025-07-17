@@ -4,7 +4,7 @@
 
 **Deployment Date**: July 17, 2025  
 **Frontend Status**: ✅ **DEPLOYED** on Vercel  
-**Backend Status**: 🚧 **DEPLOYED** on Railway (may need verification)
+**Backend Status**: ✅ **DEPLOYED** on Railway
 
 ---
 
@@ -16,9 +16,9 @@
 - **Status**: ✅ Fully functional with collaborative editing features
 
 ### Backend (Railway)
-- **API Endpoint**: [Check Railway dashboard for live URL]
-- **Status**: 🚧 Deployed but may need runtime verification
-- **Note**: All TypeScript compilation errors were resolved
+- **API Endpoint**: https://brainstorm-production-fdab.up.railway.app
+- **Status**: ✅ Live and running with all environment variables configured
+- **Health Check**: Test with `https://brainstorm-production-fdab.up.railway.app/api/health`
 
 ---
 

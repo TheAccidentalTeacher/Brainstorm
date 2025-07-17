@@ -4,8 +4,8 @@ A comprehensive, AI-powered workspace that adapts to individual and team needs, 
 
 ## 🚀 **DEPLOYED & LIVE** 
 - **Frontend**: ✅ [Live on Vercel](https://brainstorm-git-main-theaccidentalteachers-projects.vercel.app/)
-- **Backend**: 🚧 Deployed on Railway  
-- **Status**: Ready for testing and development
+- **Backend**: ✅ [Live on Railway](https://brainstorm-production-fdab.up.railway.app)  
+- **Status**: Fully deployed and ready for testing!
 
 📋 **Quick Start**: See `DEPLOYMENT_STATUS.md` for complete setup instructions
 

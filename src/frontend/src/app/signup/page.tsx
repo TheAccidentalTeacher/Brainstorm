@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { authAPI } from "@/lib/api";
 
 export default function Signup() {
   const [displayName, setDisplayName] = useState("");
@@ -31,21 +32,24 @@ export default function Signup() {
     setIsLoading(true);
 
     try {
-      // In a real implementation, this would call the backend API
-      // For now, we'll just simulate a successful registration
-      console.log("Registering with:", { displayName, email, password });
+      console.log("Attempting registration with:", { displayName, email });
       
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Call the real backend API
+      const response = await authAPI.register(email, password, displayName);
+      
+      console.log("Registration successful:", response);
       
       // Store token in localStorage (in a real app, use a more secure method)
-      localStorage.setItem("authToken", "sample-token");
+      if (response.token) {
+        localStorage.setItem("authToken", response.token);
+      }
       
       // Redirect to dashboard
       router.push("/dashboard");
     } catch (err) {
       console.error("Registration error:", err);
-      setError("Failed to create account. Please try again.");
+      const errorMessage = err instanceof Error ? err.message : "Failed to create account. Please try again.";
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
