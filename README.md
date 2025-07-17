@@ -2,6 +2,13 @@
 
 A comprehensive, AI-powered workspace that adapts to individual and team needs, providing a flexible, intuitive platform where ideas, tasks, and collaboration flow naturally.
 
+## 🚀 **DEPLOYED & LIVE** 
+- **Frontend**: ✅ [Live on Vercel](https://brainstorm-git-main-theaccidentalteachers-projects.vercel.app/)
+- **Backend**: 🚧 Deployed on Railway  
+- **Status**: Ready for testing and development
+
+📋 **Quick Start**: See `DEPLOYMENT_STATUS.md` for complete setup instructions
+
 ## Project Overview
 
 The Ultimate Project & Brainstorm Hub represents a paradigm shift in collaborative workspace technology—a platform where ideas, tasks, and collaboration flow as naturally as conversation. In today's fragmented digital landscape, teams struggle with disconnected tools that create silos between ideation and execution. Our solution bridges this gap with a unified environment that adapts to each team's unique workflow and thinking style.
