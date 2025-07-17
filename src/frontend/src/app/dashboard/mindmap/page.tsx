@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import UserGuide from '../../../components/UserGuide';
 import MindMap from '../../../components/mindmap/MindMap';
 import { Node, Edge, NodeChange, EdgeChange, Connection } from 'reactflow';
 
@@ -104,10 +105,12 @@ export default function MindMapPage() {
 
   return (
     <div className="container mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Mind Mapping</h1>
+      <UserGuide />
+      
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold mb-2">Mind Map</h1>
         <p className="text-gray-600">
-          Visualize your ideas and concepts with our interactive mind mapping tool.
+          Visualize your ideas and create connections between concepts.
         </p>
       </div>
 

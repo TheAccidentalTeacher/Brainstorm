@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Project Hub - Debug Dashboard</title>
+    <style>
+        body {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background: #1a1a1a;
+            color: #00ff00;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.4;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #00ff00;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .section {
+            background: #2a2a2a;
+            border: 1px solid #00ff00;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        .section h2 {
+            color: #ffff00;
+            margin-top: 0;
+        }
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .status-item {
+            background: #333;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #00ff00;
+        }
+        .status-item.error {
+            border-left-color: #ff0000;
+        }
+        .status-item.warning {
+            border-left-color: #ffff00;
+        }
+        .log-area {
+            background: #000;
+            border: 1px solid #333;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            font-size: 12px;
+        }
+        .button {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin: 5px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        .button:hover {
+            background: #00cc00;
+        }
+        .url-list {
+            list-style: none;
+            padding: 0;
+        }
+        .url-list li {
+            margin: 10px 0;
+            padding: 10px;
+            background: #333;
+            border-radius: 3px;
+        }
+        .url-list a {
+            color: #00ccff;
+            text-decoration: none;
+        }
+        .url-list a:hover {
+            text-decoration: underline;
+        }
+        #console-output {
+            color: #00ff00;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Ultimate Project Hub - Debug Dashboard</h1>
+            <p>F12 Enhanced Debugging Interface</p>
+        </div>
+
+        <div class="section">
+            <h2>🔍 Quick Debug Tools</h2>
+            <button class="button" onclick="runHealthCheck()">Health Check</button>
+            <button class="button" onclick="testAPI()">Test API</button>
+            <button class="button" onclick="clearLogs()">Clear Logs</button>
+            <button class="button" onclick="downloadLogs()">Download Logs</button>
+            <button class="button" onclick="toggleDebugMode()">Toggle Debug Mode</button>
+        </div>
+
+        <div class="section">
+            <h2>📊 System Status</h2>
+            <div class="status-grid">
+                <div class="status-item" id="frontend-status">
+                    <h3>Frontend (Vercel)</h3>
+                    <p id="frontend-url">URL: <a href="https://brainstorm-git-main-theaccidentalteachers-projects.vercel.app" target="_blank">brainstorm-git-main-theaccidentalteachers-projects.vercel.app</a></p>
+                    <p id="frontend-health">Status: <span id="frontend-status-text">Checking...</span></p>
+                </div>
+                <div class="status-item" id="backend-status">
+                    <h3>Backend (Railway)</h3>
+                    <p id="backend-url">URL: <a href="https://brainstorm-production-fdab.up.railway.app" target="_blank">brainstorm-production-fdab.up.railway.app</a></p>
+                    <p id="backend-health">Status: <span id="backend-status-text">Checking...</span></p>
+                </div>
+                <div class="status-item" id="database-status">
+                    <h3>Databases</h3>
+                    <p>MongoDB: <span id="mongo-status">Unknown</span></p>
+                    <p>Neo4j: <span id="neo4j-status">Unknown</span></p>
+                    <p>Redis: <span id="redis-status">Unknown</span></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔗 API Endpoints</h2>
+            <ul class="url-list">
+                <li><a href="https://brainstorm-production-fdab.up.railway.app/health" target="_blank">GET /health</a> - Health check</li>
+                <li><a href="https://brainstorm-production-fdab.up.railway.app/" target="_blank">GET /</a> - API info</li>
+                <li><code>POST /api/auth/login</code> - User login</li>
+                <li><code>POST /api/auth/register</code> - User registration</li>
+                <li><code>GET /api/auth/me</code> - Current user</li>
+                <li><code>GET /api/projects</code> - List projects</li>
+                <li><code>POST /api/projects</code> - Create project</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>📝 Live Console Output</h2>
+            <div class="log-area" id="console-output">
+Starting debug session...
+Ready for F12 debugging!
+
+Available commands:
+- getLogs() - Get all logs
+- getLogs('ERROR') - Get error logs only
+- clearLogs() - Clear log history
+- downloadLogs() - Download logs as JSON
+- setDebugMode(true/false) - Toggle debug mode
+- debugLogger - Access main logger
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🛠️ Environment Variables Check</h2>
+            <div id="env-check">
+                <p>NEXT_PUBLIC_API_URL: <span id="api-url-check">Checking...</span></p>
+                <p>Debug Mode: <span id="debug-mode-check">Checking...</span></p>
+                <p>Environment: <span id="env-check-result">Checking...</span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced debugging tools
+        let debugMode = localStorage.getItem('debugMode') === 'true';
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toISOString();
+            const output = document.getElementById('console-output');
+            const logLine = `[${timestamp}] ${type.toUpperCase()}: ${message}\n`;
+            output.textContent += logLine;
+            output.scrollTop = output.scrollHeight;
+            
+            // Also log to browser console
+            console.log(`🔧 Debug Dashboard: ${message}`);
+        }
+
+        function runHealthCheck() {
+            log('Running health check...');
+            
+            // Check backend
+            fetch('https://brainstorm-production-fdab.up.railway.app/health')
+                .then(response => response.json())
+                .then(data => {
+                    log(`Backend health: ${JSON.stringify(data, null, 2)}`);
+                    document.getElementById('backend-status-text').textContent = 'Healthy ✅';
+                    document.getElementById('backend-status').classList.remove('error');
+                })
+                .catch(error => {
+                    log(`Backend health check failed: ${error.message}`, 'error');
+                    document.getElementById('backend-status-text').textContent = 'Error ❌';
+                    document.getElementById('backend-status').classList.add('error');
+                });
+        }
+
+        function testAPI() {
+            log('Testing API endpoints...');
+            
+            // Test root endpoint
+            fetch('https://brainstorm-production-fdab.up.railway.app/')
+                .then(response => response.json())
+                .then(data => {
+                    log(`API root response: ${JSON.stringify(data, null, 2)}`);
+                })
+                .catch(error => {
+                    log(`API test failed: ${error.message}`, 'error');
+                });
+        }
+
+        function clearLogs() {
+            document.getElementById('console-output').textContent = 'Logs cleared.\n';
+            if (window.debugLogger) {
+                window.debugLogger.clearLogs();
+            }
+            log('Logs cleared');
+        }
+
+        function downloadLogs() {
+            if (window.debugLogger) {
+                window.debugLogger.downloadLogs();
+                log('Logs downloaded');
+            } else {
+                log('Debug logger not available', 'warning');
+            }
+        }
+
+        function toggleDebugMode() {
+            debugMode = !debugMode;
+            localStorage.setItem('debugMode', debugMode.toString());
+            log(`Debug mode ${debugMode ? 'enabled' : 'disabled'}`);
+            updateDebugModeDisplay();
+        }
+
+        function updateDebugModeDisplay() {
+            document.getElementById('debug-mode-check').textContent = debugMode ? 'Enabled ✅' : 'Disabled ❌';
+        }
+
+        function checkEnvironment() {
+            const apiUrl = 'https://brainstorm-production-fdab.up.railway.app/api';
+            document.getElementById('api-url-check').textContent = apiUrl;
+            document.getElementById('env-check-result').textContent = 
+                window.location.hostname === 'localhost' ? 'Development' : 'Production';
+            updateDebugModeDisplay();
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            log('Debug Dashboard loaded');
+            checkEnvironment();
+            runHealthCheck();
+            
+            // Make functions globally available for F12
+            window.debugDashboard = {
+                runHealthCheck,
+                testAPI,
+                clearLogs,
+                downloadLogs,
+                toggleDebugMode,
+                log
+            };
+            
+            console.log(`
+🔧 DEBUG DASHBOARD LOADED
+Access tools via F12 console:
+- debugDashboard.runHealthCheck()
+- debugDashboard.testAPI()
+- debugDashboard.clearLogs()
+- debugDashboard.downloadLogs()
+- debugDashboard.toggleDebugMode()
+            `);
+        });
+
+        // Auto-refresh status every 30 seconds
+        setInterval(() => {
+            if (document.visibilityState === 'visible') {
+                runHealthCheck();
+            }
+        }, 30000);
+    </script>
+</body>
+</html>

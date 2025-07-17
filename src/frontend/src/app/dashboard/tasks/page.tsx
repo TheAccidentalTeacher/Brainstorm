@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import UserGuide from '../../../components/UserGuide';
 import KanbanBoard from '../../../components/tasks/KanbanBoard';
 
 interface DragResult {
@@ -134,6 +135,48 @@ const initialBoardData = {
 
 export default function TasksPage() {
   const [viewMode, setViewMode] = useState<'kanban' | 'list' | 'calendar'>('kanban');
+  const [boardData, setBoardData] = useState(initialBoardData);
+  const [showNewTaskModal, setShowNewTaskModal] = useState(false);
+  const [newTaskTitle, setNewTaskTitle] = useState('');
+  const [newTaskDescription, setNewTaskDescription] = useState('');
+
+  const createNewTask = () => {
+    if (!newTaskTitle.trim()) return;
+    
+    const taskId = `task-${Date.now()}`;
+    const newTask = {
+      id: taskId,
+      title: newTaskTitle,
+      description: newTaskDescription,
+      priority: 'medium' as const,
+      assignee: {
+        id: 'user-1',
+        name: 'You',
+      },
+      dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 7 days from now
+    };
+
+    // Add to tasks and to the first column (To Do)
+    const updatedBoardData = {
+      ...boardData,
+      tasks: {
+        ...boardData.tasks,
+        [taskId]: newTask,
+      },
+      columns: {
+        ...boardData.columns,
+        'column-1': {
+          ...boardData.columns['column-1'],
+          taskIds: [taskId, ...boardData.columns['column-1'].taskIds],
+        },
+      },
+    };
+
+    setBoardData(updatedBoardData);
+    setNewTaskTitle('');
+    setNewTaskDescription('');
+    setShowNewTaskModal(false);
+  };
 
   const handleTaskMove = (result: DragResult) => {
     console.log('Task moved:', result);
@@ -142,6 +185,8 @@ export default function TasksPage() {
 
   return (
     <div className="container mx-auto">
+      <UserGuide />
+      
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Task Management</h1>
         <p className="text-gray-600">
@@ -183,7 +228,10 @@ export default function TasksPage() {
           </button>
         </div>
 
-        <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex items-center">
+        <button 
+          onClick={() => setShowNewTaskModal(true)}
+          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex items-center"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5 mr-1"
@@ -198,7 +246,7 @@ export default function TasksPage() {
       </div>
 
       <div className="bg-white rounded-lg shadow-lg p-6">
-        {viewMode === 'kanban' && <KanbanBoard initialBoard={initialBoardData} onTaskMove={handleTaskMove} />}
+        {viewMode === 'kanban' && <KanbanBoard initialBoard={boardData} onTaskMove={handleTaskMove} />}
         
         {viewMode === 'list' && (
           <div className="text-center py-12">
@@ -236,6 +284,57 @@ export default function TasksPage() {
           </div>
         </div>
       </div>
+
+      {/* New Task Modal */}
+      {showNewTaskModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Create New Task</h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Task Title
+                </label>
+                <input
+                  type="text"
+                  value={newTaskTitle}
+                  onChange={(e) => setNewTaskTitle(e.target.value)}
+                  className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  placeholder="Enter task title..."
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Description
+                </label>
+                <textarea
+                  value={newTaskDescription}
+                  onChange={(e) => setNewTaskDescription(e.target.value)}
+                  className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white h-20"
+                  placeholder="Enter task description..."
+                />
+              </div>
+            </div>
+            
+            <div className="flex justify-end space-x-3 mt-6">
+              <button
+                onClick={() => setShowNewTaskModal(false)}
+                className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={createNewTask}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Create Task
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

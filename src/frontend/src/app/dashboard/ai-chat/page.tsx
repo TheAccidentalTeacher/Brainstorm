@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import UserGuide from "../../../components/UserGuide";
 
 interface Message {
   id: string;
@@ -155,6 +156,8 @@ export default function AIChat() {
 
   return (
     <div className="h-[calc(100vh-6rem)] flex flex-col">
+      <UserGuide />
+      
       <div className="pb-5 border-b border-gray-200 dark:border-gray-700 sm:flex sm:items-center sm:justify-between">
         <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
           AI Chat

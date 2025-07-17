@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import UserGuide from "../../components/UserGuide";
 
 export default function Dashboard() {
   const [userName] = useState("User");
@@ -25,6 +26,8 @@ export default function Dashboard() {
 
   return (
     <div>
+      <UserGuide />
+      
       <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
         Welcome back, {userName}
       </h1>

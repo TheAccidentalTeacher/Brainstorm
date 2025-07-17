@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import UserGuide from '../../../components/UserGuide';
 import RichTextEditor from '../../../components/editor/RichTextEditor';
 
 export default function EditorPage() {
@@ -11,6 +12,8 @@ export default function EditorPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <UserGuide />
+      
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Collaborative Document Editor</h1>
         <p className="text-gray-600">

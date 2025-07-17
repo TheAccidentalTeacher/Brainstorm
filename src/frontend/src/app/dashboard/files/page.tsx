@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import UserGuide from '../../../components/UserGuide';
 import FileUpload from '../../../components/files/FileUpload';
 import FileBrowser, { FileItem } from '../../../components/files/FileBrowser';
 
@@ -418,6 +419,8 @@ export default function FilesPage() {
 
   return (
     <div className="container mx-auto">
+      <UserGuide />
+      
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">File Management</h1>
         <p className="text-gray-600">

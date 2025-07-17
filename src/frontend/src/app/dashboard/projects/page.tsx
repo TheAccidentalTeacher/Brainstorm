@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import UserGuide from "../../../components/UserGuide";
 
 interface Project {
   id: number;
@@ -97,6 +98,8 @@ export default function Projects() {
 
   return (
     <div>
+      <UserGuide />
+      
       <div className="pb-5 border-b border-gray-200 dark:border-gray-700 sm:flex sm:items-center sm:justify-between">
         <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
           Projects
