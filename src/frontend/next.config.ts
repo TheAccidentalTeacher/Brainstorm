@@ -6,8 +6,13 @@ const nextConfig: NextConfig = {
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
+  output: 'export',
+  trailingSlash: true,
+  images: {
+    unoptimized: true
+  },
   env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://brainstorm-production-fdab.up.railway.app'
   },
   async rewrites() {
     return [
