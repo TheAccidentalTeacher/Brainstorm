@@ -35,15 +35,27 @@ interface Board {
   columnOrder: string[];
 }
 
+interface DragResult {
+  source: {
+    droppableId: string;
+    index: number;
+  };
+  destination: {
+    droppableId: string;
+    index: number;
+  } | null;
+  draggableId: string;
+}
+
 interface KanbanBoardProps {
   initialBoard: Board;
-  onTaskMove?: (result: any) => void;
+  onTaskMove?: (result: DragResult) => void;
 }
 
 const KanbanBoard: React.FC<KanbanBoardProps> = ({ initialBoard, onTaskMove }) => {
   const [board, setBoard] = useState<Board>(initialBoard);
 
-  const onDragEnd = (result: any) => {
+  const onDragEnd = (result: DragResult) => {
     const { destination, source, draggableId } = result;
 
     // If there's no destination or the item was dropped back in the same place

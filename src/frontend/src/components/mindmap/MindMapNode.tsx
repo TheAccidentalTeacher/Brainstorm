@@ -13,7 +13,7 @@ const colors = [
   { bg: 'bg-pink-100', border: 'border-pink-500', text: 'text-pink-800' },
 ];
 
-const MindMapNode = ({ data, id }: NodeProps) => {
+const MindMapNode = ({ data }: NodeProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [label, setLabel] = useState(data.label);
   const [colorIndex, setColorIndex] = useState(data.colorIndex || 0);

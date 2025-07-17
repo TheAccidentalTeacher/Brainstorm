@@ -1,35 +1,27 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 
 export default function Dashboard() {
-  const [userName, setUserName] = useState("User");
-  const [recentProjects, setRecentProjects] = useState([
+  const [userName] = useState("User");
+  const [recentProjects] = useState([
     { id: 1, name: "Marketing Campaign", progress: 75, color: "bg-blue-500" },
     { id: 2, name: "Product Launch", progress: 40, color: "bg-green-500" },
     { id: 3, name: "Research Project", progress: 20, color: "bg-purple-500" },
   ]);
   
-  const [upcomingTasks, setUpcomingTasks] = useState([
+  const [upcomingTasks] = useState([
     { id: 1, title: "Finalize design mockups", dueDate: "Today", priority: "high" },
     { id: 2, title: "Review marketing materials", dueDate: "Tomorrow", priority: "medium" },
     { id: 3, title: "Team meeting", dueDate: "Jul 18", priority: "medium" },
     { id: 4, title: "Prepare presentation", dueDate: "Jul 20", priority: "high" },
   ]);
   
-  const [aiInsights, setAiInsights] = useState([
+  const [aiInsights] = useState([
     { id: 1, type: "pattern", content: "Your team completes tasks 30% faster when they're broken down into smaller subtasks." },
     { id: 2, type: "suggestion", content: "Consider scheduling brainstorming sessions in the morning based on your team's activity patterns." },
   ]);
-
-  // In a real app, you would fetch this data from your API
-  useEffect(() => {
-    // Simulate fetching user data
-    setTimeout(() => {
-      setUserName("Alex");
-    }, 1000);
-  }, []);
 
   return (
     <div>
@@ -37,7 +29,7 @@ export default function Dashboard() {
         Welcome back, {userName}
       </h1>
       <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-        Here's what's happening with your projects today.
+        Here&apos;s what&apos;s happening with your projects today.
       </p>
 
       <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">

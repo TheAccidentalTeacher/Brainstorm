@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 
 // File type definition
 export interface FileItem {
@@ -145,10 +146,12 @@ const FileBrowser: React.FC<FileBrowserProps> = ({
     // Image
     if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(extension)) {
       return file.thumbnailUrl ? (
-        <img
+        <Image
           src={file.thumbnailUrl}
           alt={file.name}
-          className="h-10 w-10 object-cover rounded"
+          width={40}
+          height={40}
+          className="object-cover rounded"
         />
       ) : (
         <svg

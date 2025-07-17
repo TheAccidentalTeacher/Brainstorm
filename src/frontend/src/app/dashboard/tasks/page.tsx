@@ -3,6 +3,18 @@
 import React, { useState } from 'react';
 import KanbanBoard from '../../../components/tasks/KanbanBoard';
 
+interface DragResult {
+  source: {
+    droppableId: string;
+    index: number;
+  };
+  destination: {
+    droppableId: string;
+    index: number;
+  } | null;
+  draggableId: string;
+}
+
 // Sample data for the Kanban board
 const initialBoardData = {
   tasks: {
@@ -123,7 +135,7 @@ const initialBoardData = {
 export default function TasksPage() {
   const [viewMode, setViewMode] = useState<'kanban' | 'list' | 'calendar'>('kanban');
 
-  const handleTaskMove = (result: any) => {
+  const handleTaskMove = (result: DragResult) => {
     console.log('Task moved:', result);
     // In a real app, we would update the backend here
   };

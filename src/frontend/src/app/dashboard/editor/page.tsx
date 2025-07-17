@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import RichTextEditor from '../../../components/editor/RichTextEditor';
 
 export default function EditorPage() {
-  const [documentId, setDocumentId] = useState<string>('demo-document-123');
-  const [userName, setUserName] = useState<string>('Demo User');
-  const [userColor, setUserColor] = useState<string>('#' + Math.floor(Math.random() * 16777215).toString(16));
-  const [initialContent, setInitialContent] = useState<string>('<h1>Welcome to the Collaborative Editor</h1><p>This is a demonstration of real-time collaborative editing using TipTap and Y.js.</p><p>Try opening this page in multiple browser windows to see the collaboration in action!</p>');
+  const [documentId] = useState<string>('demo-document-123');
+  const [userName] = useState<string>('Demo User');
+  const [userColor] = useState<string>('#' + Math.floor(Math.random() * 16777215).toString(16));
+  const [initialContent] = useState<string>('<h1>Welcome to the Collaborative Editor</h1><p>This is a demonstration of real-time collaborative editing using TipTap and Y.js.</p><p>Try opening this page in multiple browser windows to see the collaboration in action!</p>');
 
   return (
     <div className="container mx-auto px-4 py-8">

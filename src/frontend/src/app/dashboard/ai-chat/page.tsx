@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
+import React, { useState, useEffect, useRef } from "react";
 
 interface Message {
   id: string;
@@ -128,7 +127,7 @@ export default function AIChat() {
   // Simple AI response generator (in a real app, this would call your AI service)
   const getAIResponse = (userMessage: string): string => {
     const responses = [
-      "That's an interesting point. Let me think about that for a moment...",
+      `That's an interesting point about "${userMessage}". Let me think about that for a moment...`,
       "Based on your project's context, I would recommend considering these factors...",
       "I've analyzed similar situations in your other projects, and here's what I found...",
       "Let me help you break this down into manageable steps...",

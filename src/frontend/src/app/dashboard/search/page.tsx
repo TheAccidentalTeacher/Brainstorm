@@ -3,8 +3,22 @@
 import React, { useState } from 'react';
 import SearchBar from '../../../components/search/SearchBar';
 
+interface SearchResult {
+  id: string;
+  title: string;
+  type: string;
+  excerpt: string;
+  tags: string[];
+  url: string;
+  createdAt: string;
+  createdBy: {
+    id: string;
+    name: string;
+  };
+}
+
 // Sample content data for search
-const sampleContent = [
+const sampleContent: SearchResult[] = [
   {
     id: 'content-1',
     title: 'Marketing Campaign Plan',
@@ -180,7 +194,7 @@ export default function SearchPage() {
   });
 
   // Perform search
-  const handleSearch = async (query: string): Promise<any[]> => {
+  const handleSearch = async (query: string): Promise<SearchResult[]> => {
     // In a real app, this would be an API call
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -496,17 +510,17 @@ export default function SearchPage() {
               <h3 className="text-sm font-medium text-gray-700 mb-2">Date Range</h3>
               <div className="space-y-2">
                 {[
-                  { value: 'all', label: 'All Time' },
-                  { value: 'today', label: 'Today' },
-                  { value: 'week', label: 'Past Week' },
-                  { value: 'month', label: 'Past Month' },
+                  { value: 'all' as const, label: 'All Time' },
+                  { value: 'today' as const, label: 'Today' },
+                  { value: 'week' as const, label: 'Past Week' },
+                  { value: 'month' as const, label: 'Past Month' },
                 ].map((range) => (
                   <div key={range.value} className="flex items-center">
                     <input
                       type="radio"
                       id={`date-${range.value}`}
                       checked={searchFilters.dateRange === range.value}
-                      onChange={() => setDateRangeFilter(range.value as any)}
+                      onChange={() => setDateRangeFilter(range.value)}
                       className="h-4 w-4 text-blue-600 focus:ring-blue-500"
                     />
                     <label

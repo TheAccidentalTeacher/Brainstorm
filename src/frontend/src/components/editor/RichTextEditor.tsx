@@ -168,7 +168,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           }`}
           title="Quote"
         >
-          "
+          &quot;
         </button>
         <button
           onClick={() => editor.chain().focus().undo().run()}

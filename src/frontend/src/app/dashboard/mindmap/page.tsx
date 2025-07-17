@@ -61,7 +61,7 @@ const initialEdges: Edge[] = [
 
 export default function MindMapPage() {
   const [nodes, setNodes] = useState<Node[]>(initialNodes);
-  const [edges, setEdges] = useState<Edge[]>(initialEdges);
+  const [edges] = useState<Edge[]>(initialEdges);
   const [currentMindMap, setCurrentMindMap] = useState<string>('Project Hub');
 
   // Handle nodes change
@@ -201,7 +201,7 @@ export default function MindMapPage() {
             <ul className="list-disc pl-5 space-y-1 text-gray-700">
               <li>Double-click on any node to edit its text</li>
               <li>Click the color icon on a node to change its color</li>
-              <li>Drag from one node's handle to another to create connections</li>
+              <li>Drag from one node&apos;s handle to another to create connections</li>
               <li>Use the panel in the top-left to add new nodes</li>
               <li>Drag nodes to rearrange your mind map</li>
             </ul>
