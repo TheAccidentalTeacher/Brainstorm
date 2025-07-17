@@ -109,35 +109,44 @@ export default function AIChat() {
     setMessage("");
     setIsLoading(true);
     
-    // Simulate API call delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      // Call your actual backend AI service
+      const response = await fetch(`https://brainstorm-production-fdab.up.railway.app/api/ai-chat/${currentChat || 'default'}/message`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // Skip auth for now since we bypassed it
+        },
+        body: JSON.stringify({
+          message: message,
+          context: 'dashboard-chat'
+        })
+      });
+      
+      const data = await response.json();
+      
+      // Add AI response from backend
+      const aiMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        sender: "ai",
+        content: data.response || "I'm having trouble connecting to the AI service right now. Please try again.",
+        timestamp: new Date(),
+      };
+      
+      setMessages((prev) => [...prev, aiMessage]);
+    } catch (error) {
+      console.error('AI Chat Error:', error);
+      // Fallback to local response if backend fails
+      const aiMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        sender: "ai",
+        content: "I'm having trouble connecting to the AI service right now. Please try again later.",
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, aiMessage]);
+    }
     
-    // Add AI response
-    const aiMessage: Message = {
-      id: (Date.now() + 1).toString(),
-      sender: "ai",
-      content: getAIResponse(message),
-      timestamp: new Date(),
-    };
-    
-    setMessages((prev) => [...prev, aiMessage]);
     setIsLoading(false);
-  };
-
-  // Simple AI response generator (in a real app, this would call your AI service)
-  const getAIResponse = (userMessage: string): string => {
-    const responses = [
-      `That's an interesting point about "${userMessage}". Let me think about that for a moment...`,
-      "Based on your project's context, I would recommend considering these factors...",
-      "I've analyzed similar situations in your other projects, and here's what I found...",
-      "Let me help you break this down into manageable steps...",
-      "I can see several approaches to this challenge. First, we could...",
-      "Looking at your team's previous work patterns, I notice that...",
-      "This reminds me of something in your notes from last week. Let me connect those ideas...",
-    ];
-    
-    return responses[Math.floor(Math.random() * responses.length)] + 
-      " Would you like me to elaborate on any specific aspect of this?";
   };
 
   // Format timestamp
