@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import UserGuide from '../../../components/UserGuide';
 import KanbanBoard from '../../../components/tasks/KanbanBoard';
+import ConfirmDeleteModal, { useConfirmDeleteModal } from '../../../components/ConfirmDeleteModal';
 import { contentAPI, Task } from '../../../lib/contentApi';
 
 interface DragResult {
@@ -32,6 +33,15 @@ export default function TasksPage() {
     status: 'todo' as const,
     dueDate: '',
   });
+
+  // Confirmation modal hook
+  const {
+    isOpen: isDeleteModalOpen,
+    pendingDelete,
+    showDeleteConfirm,
+    handleConfirm: confirmDelete,
+    handleClose: closeDeleteModal,
+  } = useConfirmDeleteModal();
 
   // Load tasks on component mount
   useEffect(() => {
@@ -120,6 +130,25 @@ export default function TasksPage() {
     } finally {
       setSaving(false);
     }
+  };
+
+  const deleteTaskHandler = async (taskId: string) => {
+    try {
+      setSaving(true);
+      await contentAPI.deleteTask(taskId);
+      
+      const updatedTasks = tasks.filter(task => task._id !== taskId);
+      setTasks(updatedTasks);
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      alert('Error deleting task. Please try again.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const initiateDeleteTask = (taskId: string, taskTitle: string) => {
+    showDeleteConfirm(taskId, taskTitle, 'task', () => deleteTaskHandler(taskId));
   };
 
   const handleTaskMove = async (result: DragResult) => {
@@ -285,6 +314,16 @@ export default function TasksPage() {
                         )}
                       </div>
                     </div>
+                    <div className="flex items-center gap-2 ml-4">
+                      <button
+                        onClick={() => initiateDeleteTask(task._id!, task.title)}
+                        disabled={saving}
+                        className="text-red-600 hover:text-red-800 hover:bg-red-50 p-2 rounded transition-colors disabled:opacity-50"
+                        title="Delete task"
+                      >
+                        🗑️
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))
@@ -414,6 +453,16 @@ export default function TasksPage() {
           </div>
         </div>
       )}
+
+      {/* Confirmation Modal */}
+      <ConfirmDeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        onConfirm={confirmDelete}
+        itemType="task"
+        itemName={pendingDelete?.name || ''}
+        loading={saving}
+      />
     </div>
   );
 }

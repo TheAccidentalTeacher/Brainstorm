@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import UserGuide from '../../../components/UserGuide';
+import ConfirmDeleteModal, { useConfirmDeleteModal } from '../../../components/ConfirmDeleteModal';
 import { contentAPI, Note } from '../../../lib/contentApi';
 
 export default function NotesPage() {
@@ -12,6 +13,15 @@ export default function NotesPage() {
   const [editContent, setEditContent] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+
+  // Confirmation modal hook
+  const {
+    isOpen: isDeleteModalOpen,
+    pendingDelete,
+    showDeleteConfirm,
+    handleConfirm: confirmDelete,
+    handleClose: closeDeleteModal,
+  } = useConfirmDeleteModal();
 
   // Load notes from API on component mount
   useEffect(() => {
@@ -106,11 +116,7 @@ export default function NotesPage() {
     }
   };
 
-  const deleteNote = async (noteId: string) => {
-    if (!window.confirm('Are you sure you want to delete this note? This action cannot be undone.')) {
-      return;
-    }
-
+    const deleteNoteHandler = async (noteId: string) => {
     try {
       setSaving(true);
       await contentAPI.deleteNote(noteId);
@@ -127,6 +133,10 @@ export default function NotesPage() {
     } finally {
       setSaving(false);
     }
+  };
+
+  const initiateDelete = (noteId: string, noteTitle: string) => {
+    showDeleteConfirm(noteId, noteTitle, 'note', () => deleteNoteHandler(noteId));
   };
 
   const cancelEditing = () => {
@@ -242,7 +252,7 @@ export default function NotesPage() {
                         Edit
                       </button>
                       <button
-                        onClick={() => deleteNote(selectedNote._id!)}
+                        onClick={() => initiateDelete(selectedNote._id!, selectedNote.title)}
                         disabled={saving}
                         className="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 disabled:opacity-50"
                       >
@@ -286,6 +296,16 @@ export default function NotesPage() {
           )}
         </div>
       </div>
+
+      {/* Confirmation Modal */}
+      <ConfirmDeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        onConfirm={confirmDelete}
+        itemType="note"
+        itemName={pendingDelete?.name || ''}
+        loading={saving}
+      />
     </div>
   );
 }
