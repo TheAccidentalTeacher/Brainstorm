@@ -58,7 +58,7 @@ export default function RootLayout({
                   return entry;
                 },
                 error: (message, error, data) => {
-                  const entry = createLogEntry('error', message, { error, ...data });
+                  const entry = createLogEntry('error', message, { error: error, data: data });
                   console.error('🔴 ' + message, error || '', data || '');
                   return entry;
                 },
@@ -144,7 +144,25 @@ export default function RootLayout({
 
               logger.info('🚀 Ultimate Project Hub Debug Tools Initialized');
 
-              console.log('🚀 ULTIMATE PROJECT HUB - F12 DEBUG TOOLS READY!\\n\\nCOMMANDS:\\n• getLogs() - Get all logs\\n• getLogs(\\'ERROR\\') - Get error logs only\\n• clearLogs() - Clear log history\\n• downloadLogs() - Download logs as JSON\\n• setDebugMode(true/false) - Toggle debug mode\\n• healthCheck() - Test backend health\\n• testAPI() - Test all API endpoints\\n\\nEXAMPLES:\\n> healthCheck()          // Check backend status\\n> testAPI()             // Test all endpoints\\n> getLogs(\\'ERROR\\')      // See errors only\\n> downloadLogs()        // Download debug file\\n\\nBackend: https://brainstorm-production-fdab.up.railway.app\\nFrontend: ' + window.location.origin);
+              console.log('🚀 ULTIMATE PROJECT HUB - F12 DEBUG TOOLS READY!');
+              console.log('');
+              console.log('COMMANDS:');
+              console.log('• getLogs() - Get all logs');
+              console.log('• getLogs(\\'ERROR\\') - Get error logs only');
+              console.log('• clearLogs() - Clear log history');
+              console.log('• downloadLogs() - Download logs as JSON');
+              console.log('• setDebugMode(true/false) - Toggle debug mode');
+              console.log('• healthCheck() - Test backend health');
+              console.log('• testAPI() - Test all API endpoints');
+              console.log('');
+              console.log('EXAMPLES:');
+              console.log('> healthCheck()          // Check backend status');
+              console.log('> testAPI()             // Test all endpoints');
+              console.log('> getLogs(\\'ERROR\\')      // See errors only');
+              console.log('> downloadLogs()        // Download debug file');
+              console.log('');
+              console.log('Backend: https://brainstorm-production-fdab.up.railway.app');
+              console.log('Frontend: ' + window.location.origin);
 
               setTimeout(() => {
                 healthCheck().catch(() => {
