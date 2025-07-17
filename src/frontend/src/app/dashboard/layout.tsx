@@ -15,8 +15,8 @@ export default function DashboardLayout({
 
   // Check authentication on component mount
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    setIsAuthenticated(!!token);
+    // Skip auth check for personal use - go straight to dashboard
+    setIsAuthenticated(true);
     
     // In a real app, you would validate the token with your backend
   }, []);
