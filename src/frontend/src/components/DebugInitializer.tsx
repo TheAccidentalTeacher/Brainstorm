@@ -18,13 +18,16 @@ export default function DebugInitializer() {
       (window as any).downloadLogs = () => logger.downloadLogs();
       (window as any).setDebugMode = (enabled: boolean) => logger.setDebugMode(enabled);
       
-      "use client";
+      'use client';
 
 import { useEffect } from 'react';
 
 export default function DebugInitializer() {
   useEffect(() => {
-    // Production debug logger
+    // Only run in browser
+    if (typeof window === 'undefined') return;
+
+    // Simple production logger
     const logs: any[] = [];
     const maxLogs = 1000;
 
@@ -34,7 +37,7 @@ export default function DebugInitializer() {
         level: level.toUpperCase(),
         message,
         url: window.location.href,
-        ...(data && { data })
+        data: data || null
       };
 
       logs.push(entry);
@@ -48,17 +51,17 @@ export default function DebugInitializer() {
     const logger = {
       info: (message: string, data?: any) => {
         const entry = createLogEntry('info', message, data);
-        console.log(`🔵 ${message}`, data || '');
+        console.log('🔵 ' + message, data || '');
         return entry;
       },
       error: (message: string, error?: any, data?: any) => {
         const entry = createLogEntry('error', message, { error, ...data });
-        console.error(`🔴 ${message}`, error || '', data || '');
+        console.error('🔴 ' + message, error || '', data || '');
         return entry;
       },
       debug: (message: string, data?: any) => {
         const entry = createLogEntry('debug', message, data);
-        console.debug(`🔍 ${message}`, data || '');
+        console.debug('🔍 ' + message, data || '');
         return entry;
       },
       getLogs: (level?: string, limit?: number) => {
@@ -83,7 +86,7 @@ export default function DebugInitializer() {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `debug-logs-${new Date().toISOString()}.json`;
+        a.download = 'debug-logs-' + new Date().toISOString() + '.json';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -92,7 +95,7 @@ export default function DebugInitializer() {
       },
       setDebugMode: (enabled: boolean) => {
         localStorage.setItem('debugMode', enabled.toString());
-        console.log(`🔧 Debug mode ${enabled ? 'enabled' : 'disabled'}`);
+        console.log('🔧 Debug mode ' + (enabled ? 'enabled' : 'disabled'));
       }
     };
 
@@ -161,7 +164,7 @@ EXAMPLES:
 > downloadLogs()        // Download debug file
 
 Backend: https://brainstorm-production-fdab.up.railway.app
-Frontend: ${window.location.origin}
+Frontend: ` + window.location.origin + `
     `);
 
     // Auto health check
