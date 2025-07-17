@@ -1,0 +1,17 @@
+{
+  "name": "ultimate-project-hub",
+  "version": "1.0.0",
+  "description": "Ultimate Project & Brainstorm Hub - Full Stack Application",
+  "scripts": {
+    "build": "cd src/backend && npm install && npm run build",
+    "start": "cd src/backend && npm start",
+    "dev:backend": "cd src/backend && npm run dev",
+    "dev:frontend": "cd src/frontend && npm run dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TheAccidentalTeacher/Brainstorm.git"
+  },
+  "author": "Scott Somers",
+  "license": "ISC"
+}

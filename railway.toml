@@ -1,12 +1,6 @@
-# Railway Configuration
+# Railway Configuration for Backend
 [build]
-  builder = "NIXPACKS"
-
-[build.env]
-  NODE_VERSION = "18"
+  buildCommand = "cd src/backend && npm install && npm run build"
 
 [deploy]
   startCommand = "cd src/backend && npm start"
-
-[build.buildCommand]
-  buildCommand = "cd src/backend && npm install && npm run build"
