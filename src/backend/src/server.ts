@@ -194,15 +194,43 @@ const startServer = async () => {
     });
     
     // Handle graceful shutdown
-    process.on('SIGINT', async () => {
-      logger.info('Received SIGINT, shutting down gracefully...');
-      await mongoose.connection.close();
-      await neo4jDriver.close();
-      await redisClient.quit();
-      server.close(() => {
-        logger.info('Server shut down complete');
-        process.exit(0);
-      });
+    const gracefulShutdown = async (signal: string) => {
+      logger.info(`Received ${signal}, shutting down gracefully...`);
+      try {
+        await mongoose.connection.close();
+        await neo4jDriver.close();
+        await redisClient.quit();
+        server.close(() => {
+          logger.info('Server shut down complete');
+          process.exit(0);
+        });
+        
+        // Force exit after 10 seconds if graceful shutdown takes too long
+        setTimeout(() => {
+          logger.error('Forced shutdown after timeout');
+          process.exit(1);
+        }, 10000);
+      } catch (error) {
+        logger.error('Error during shutdown', error);
+        process.exit(1);
+      }
+    };
+
+    // Handle different shutdown signals
+    process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+    process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+    process.on('SIGUSR2', () => gracefulShutdown('SIGUSR2')); // Nodemon restart
+    
+    // Handle uncaught exceptions
+    process.on('uncaughtException', (error) => {
+      logger.error('Uncaught Exception', error);
+      gracefulShutdown('UNCAUGHT_EXCEPTION');
+    });
+    
+    // Handle unhandled promise rejections
+    process.on('unhandledRejection', (reason, promise) => {
+      logger.error('Unhandled Rejection at Promise', { reason, promise });
+      gracefulShutdown('UNHANDLED_REJECTION');
     });
   } catch (error) {
     logger.error('Server startup failed', error);
